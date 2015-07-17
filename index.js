@@ -5,20 +5,25 @@ var PadManager = require('ep_etherpad-lite/node/db/PadManager'),
 exports.deletePadAtLeave = function(hook, session, cb) {
     var pad = session.padId;
     PadManager.doesPadExists(pad, function(err, exists) {
-        if (exists) {
-            PadManager.getPad(pad, function (err, pad) {
-                if (err) {
-                    return cb(err);
-                }
-                if (pad.getHeadRevisionNumber() === 0) {
-                    console.log('Deleting %s when user leaved since empty', session.padId);
-                    pad.remove(cb);
-                } else {
-                    cb();
-                }
-            });
-        } else {
-            cb();
+        if (exists !== undefined && exists !== null) {
+            if (exists) {
+                PadManager.getPad(pad, function (err, pad) {
+                    if (err) {
+                        return cb(err);
+                    }
+                    var head = pad.getHeadRevisionNumber();
+                    if (head !== undefined && head !== null) {
+                        if (head === 0) {
+                            console.log('Deleting %s when user leaved since empty', session.padId);
+                            pad.remove(cb);
+                        } else {
+                            cb();
+                        }
+                    }
+                });
+            } else {
+                cb();
+            }
         }
     });
 };
@@ -35,13 +40,16 @@ exports.deletePadsAtStart = function (hook_name, args, cb) {
                 if (err) {
                     return cb(err);
                 }
-                if (pad.getHeadRevisionNumber() === 0) {
-                    q.push(pad, function (err) {
-                        if (err) {
-                            return cb(err);
-                        }
-                        console.log('Deleting %s at startup since empty', pad.id);
-                    });
+                var head = pad.getHeadRevisionNumber();
+                if (head !== undefined && head !== null) {
+                    if (head === 0) {
+                        q.push(pad, function (err) {
+                            if (err) {
+                                return cb(err);
+                            }
+                            console.log('Deleting %s at startup since empty', pad.id);
+                        });
+                    }
                 }
             });
         });
