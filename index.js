@@ -3,29 +3,31 @@ var PadManager = require('ep_etherpad-lite/node/db/PadManager'),
 
 // Check if we need to delete the pad each time a user leaves
 exports.deletePadAtLeave = function(hook, session, cb) {
-    var pad = session.padId;
-    PadManager.doesPadExists(pad, function(err, exists) {
-        if (exists !== undefined && exists !== null) {
-            if (exists) {
-                PadManager.getPad(pad, function (err, pad) {
-                    if (err) {
-                        return cb(err);
-                    }
-                    var head = pad.getHeadRevisionNumber();
-                    if (head !== undefined && head !== null) {
-                        if (head === 0) {
-                            console.log('Deleting %s when user leaved since empty', session.padId);
-                            pad.remove(cb);
-                        } else {
-                            cb();
+    if (session !== undefined && session !== null) {
+        var pad = session.padId;
+        PadManager.doesPadExists(pad, function(err, exists) {
+            if (exists !== undefined && exists !== null) {
+                if (exists) {
+                    PadManager.getPad(pad, function (err, pad) {
+                        if (err) {
+                            return cb(err);
                         }
-                    }
-                });
-            } else {
-                cb();
+                        var head = pad.getHeadRevisionNumber();
+                        if (head !== undefined && head !== null) {
+                            if (head === 0) {
+                                console.log('Deleting %s when user leaved since empty', session.padId);
+                                pad.remove(cb);
+                            } else {
+                                cb();
+                            }
+                        }
+                    });
+                } else {
+                    cb();
+                }
             }
-        }
-    });
+        });
+    }
 };
 
 // Delete empty pads at startup
