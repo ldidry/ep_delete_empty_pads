@@ -1,7 +1,7 @@
 
 {
     "name": "ep_delete_empty_pads",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "description": "Delete pads which were never edited",
     "author": {
         "name": "Luc Didry",
@@ -9,6 +9,7 @@
         "url": "https://fiat-tux.fr"
     },
     "dependencies": {
+        "async": "0.9.0"
     },
     "peerDependencies":{
     },
