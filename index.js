@@ -36,24 +36,34 @@ exports.deletePadsAtStart = function (hook_name, args, cb) {
     var q = async.queue(function (pad, callback) {
         pad.remove(callback);
     }, 2);
+    // Emptyness test queue
+    var p = async.queue(function(padId, callback) {
+        PadManager.getPad(padId, function (err, pad) {
+            if (err) {
+                return callback(err);
+            }
+            var head = pad.getHeadRevisionNumber();
+            if (head !== undefined && head !== null) {
+                if (head === 0) {
+                    q.push(pad, function (err) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        console.log('Deleting %s at startup since empty', pad.id);
+                    });
+                }
+                callback();
+            }
+        });
+    }, 1);
     PadManager.listAllPads(function (err, data) {
-        async.each(data.padIDs, function (padId, cb) {
-            PadManager.getPad(padId, function (err, pad) {
+        for (var i = 0; i < data.padIDs.length; i++) {
+            var padId = data.padIDs[i];
+            p.push(padId, function(err) {
                 if (err) {
                     return cb(err);
                 }
-                var head = pad.getHeadRevisionNumber();
-                if (head !== undefined && head !== null) {
-                    if (head === 0) {
-                        q.push(pad, function (err) {
-                            if (err) {
-                                return cb(err);
-                            }
-                            console.log('Deleting %s at startup since empty', pad.id);
-                        });
-                    }
-                }
             });
-        });
+        }
     });
 };
