@@ -1,24 +1,20 @@
-
 {
     "name": "ep_delete_empty_pads",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "Delete pads which were never edited",
     "author": {
         "name": "Luc Didry",
         "email": "luc@didry.org",
         "url": "https://fiat-tux.fr"
     },
-    "dependencies": {
-    },
-    "peerDependencies":{
-    },
-    "repository" : {
-        "type" : "git",
-        "url" : "https://framagit.org/fiat-tux/etherpad/ep_delete_empty_pads.git"
+    "dependencies": {},
+    "peerDependencies": {},
+    "repository": {
+        "type": "git",
+        "url": "https://framagit.org/fiat-tux/etherpad/ep_delete_empty_pads.git"
     },
     "bugs": {
-        "url" : "https://framagit.org/fiat-tux/etherpad/ep_delete_empty_pads/issues"
+        "url": "https://framagit.org/fiat-tux/etherpad/ep_delete_empty_pads/issues"
     },
     "license": "Apache-2.0"
 }
-
