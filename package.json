@@ -14,10 +14,10 @@
     },
     "repository" : {
         "type" : "git",
-        "url" : "https://git.framasoft.org/luc/ep_delete_empty_pads.git"
+        "url" : "https://framagit.org/fiat-tux/etherpad/ep_delete_empty_pads.git"
     },
     "bugs": {
-        "url" : "https://git.framasoft.org/luc/ep_delete_empty_pads/issues"
+        "url" : "https://framagit.org/fiat-tux/etherpad/ep_delete_empty_pads/issues"
     },
     "license": "Apache-2.0"
 }
