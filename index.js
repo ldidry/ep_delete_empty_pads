@@ -23,6 +23,7 @@ exports.deletePadAtLeave = (hook, session, cb) => {
     if (session !== undefined && session !== null) {
         var pad = session.padId;
         doesPadExists(pad, (err, exists) => {
+            if (err) return;
             if (exists !== undefined && exists !== null) {
                 if (exists) {
                     getPad(pad, null, (err, pad) => {
@@ -70,6 +71,7 @@ exports.deletePadsAtStart = (hook_name, args, cb) => {
     }, 1);
 
     listAllPads((err, data) => {
+        if (err) return;
         for (var i = 0; i < data.padIDs.length; i++) {
             var padId = data.padIDs[i];
             p.push(padId);
