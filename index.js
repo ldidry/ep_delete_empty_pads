@@ -20,23 +20,17 @@ if (usePromises) {
 
 // Check if we need to delete the pad each time a user leaves
 exports.deletePadAtLeave = (hook, session, cb) => {
-    if (session !== undefined && session !== null) {
-        var pad = session.padId;
-        doesPadExists(pad, (err, exists) => {
-            if (err) return;
-            if (exists) {
-                getPad(pad, null, (err, pad) => {
-                    if (err) return;
-                    var head = pad.getHeadRevisionNumber();
-                    if (head === 0) {
-                        logger.info('Deleting '+session.padId+' when user leaved since empty');
-                        var remove = getRemoveFun(pad)
-                        remove(() => {});
-                    }
-                });
-            }
+    if (session == null) return cb();
+    var pad = session.padId;
+    doesPadExists(pad, (err, exists) => {
+        if (err || !exists) return;
+        getPad(pad, null, (err, pad) => {
+            if (err || pad.getHeadRevisionNumber() !== 0) return;
+            logger.info('Deleting '+session.padId+' when user leaved since empty');
+            var remove = getRemoveFun(pad)
+            remove(() => {});
         });
-    }
+    });
     return cb(); // No need to wait for completion before calling the callback.
 };
 
@@ -50,16 +44,11 @@ exports.deletePadsAtStart = (hook_name, args, cb) => {
     // Emptyness test queue
     var p = asyncM.queue((padId, callback) => {
         getPad(padId, null, (err, pad) => {
-            if (err) {
-                return callback(err);
-            }
-            var head = pad.getHeadRevisionNumber();
-            if (head === 0) {
-                q.push(pad, (err) => {
-                    if (err) return;
-                    logger.info('Deleting '+pad.id+' at startup since empty');
-                });
-            }
+            if (err || pad.getHeadRevisionNumber() !== 0) return callback(err);
+            q.push(pad, (err) => {
+                if (err) return;
+                logger.info('Deleting '+pad.id+' at startup since empty');
+            });
             callback();
         });
     }, 1);
