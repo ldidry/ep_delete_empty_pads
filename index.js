@@ -60,14 +60,12 @@ exports.deletePadsAtStart = (hook_name, args, cb) => {
             if (head !== undefined && head !== null) {
                 if (head === 0) {
                     q.push(pad, (err) => {
-                        if (err) {
-                            return callback(err);
-                        }
+                        if (err) return;
                         logger.info('Deleting '+pad.id+' at startup since empty');
                     });
                 }
-                callback();
             }
+            callback();
         });
     }, 1);
 
