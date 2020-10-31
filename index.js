@@ -24,20 +24,16 @@ exports.deletePadAtLeave = (hook, session, cb) => {
         var pad = session.padId;
         doesPadExists(pad, (err, exists) => {
             if (err) return;
-            if (exists !== undefined && exists !== null) {
-                if (exists) {
-                    getPad(pad, null, (err, pad) => {
-                        if (err) return;
-                        var head = pad.getHeadRevisionNumber();
-                        if (head !== undefined && head !== null) {
-                            if (head === 0) {
-                                logger.info('Deleting '+session.padId+' when user leaved since empty');
-                                var remove = getRemoveFun(pad)
-                                remove(() => {});
-                            }
-                        }
-                    });
-                }
+            if (exists) {
+                getPad(pad, null, (err, pad) => {
+                    if (err) return;
+                    var head = pad.getHeadRevisionNumber();
+                    if (head === 0) {
+                        logger.info('Deleting '+session.padId+' when user leaved since empty');
+                        var remove = getRemoveFun(pad)
+                        remove(() => {});
+                    }
+                });
             }
         });
     }
@@ -58,13 +54,11 @@ exports.deletePadsAtStart = (hook_name, args, cb) => {
                 return callback(err);
             }
             var head = pad.getHeadRevisionNumber();
-            if (head !== undefined && head !== null) {
-                if (head === 0) {
-                    q.push(pad, (err) => {
-                        if (err) return;
-                        logger.info('Deleting '+pad.id+' at startup since empty');
-                    });
-                }
+            if (head === 0) {
+                q.push(pad, (err) => {
+                    if (err) return;
+                    logger.info('Deleting '+pad.id+' at startup since empty');
+                });
             }
             callback();
         });
