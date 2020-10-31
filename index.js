@@ -81,8 +81,7 @@ exports.deletePadsAtStart = (hook_name, args, cb) => {
 };
 
 function wrapPromise (p, cb) {
-  return p.then((result) => { cb(null, result); })
-    .catch((err) => { cb(err); });
+  return p.then((result) => cb(null, result), (err) => cb(err));
 }
 
 function callbackify0 (fun) {
