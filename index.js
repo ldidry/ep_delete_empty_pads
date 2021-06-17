@@ -4,19 +4,9 @@ const logger = log4js.getLogger('ep_delete_empty_pads');
 var PadManager = require('ep_etherpad-lite/node/db/PadManager'),
     asyncM     = require('ep_etherpad-lite/node_modules/async');
 
-var epVersion = parseFloat(require('ep_etherpad-lite/package.json').version);
-var usePromises = epVersion >= 1.8
-var getPad, listAllPads, doesPadExists
-
-if (usePromises) {
-  getPad = callbackify2(PadManager.getPad)
-  doesPadExists = callbackify1(PadManager.doesPadExists)
-  listAllPads = callbackify0(PadManager.listAllPads)
-} else {
-  getPad = PadManager.getPad
-  doesPadExists = PadManager.doesPadExists
-  listAllPads = PadManager.listAllPads
-}
+const getPad = callbackify2(PadManager.getPad);
+const doesPadExists = callbackify1(PadManager.doesPadExists);
+const listAllPads = callbackify0(PadManager.listAllPads);
 
 // Check if we need to delete the pad each time a user leaves
 exports.deletePadAtLeave = (hook, session, cb) => {
@@ -87,10 +77,5 @@ function callbackify2 (fun) {
 
 function getRemoveFun (pad) {
   var fun = pad.remove.bind(pad)
-
-  if (usePromises) {
-    return callbackify0(fun)
-  }
-
-  return fun;
+  return callbackify0(fun);
 }
