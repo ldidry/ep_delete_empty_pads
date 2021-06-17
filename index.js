@@ -26,31 +26,21 @@ exports.deletePadAtLeave = (hook, session, cb) => {
             if (exists !== undefined && exists !== null) {
                 if (exists) {
                     getPad(pad, null, (err, pad) => {
-                        if (err && !usePromises) {
-                            return cb(err);
-                        }
+                        if (err) return;
                         var head = pad.getHeadRevisionNumber();
                         if (head !== undefined && head !== null) {
                             if (head === 0) {
                                 logger.info('Deleting '+session.padId+' when user leaved since empty');
                                 var remove = getRemoveFun(pad)
-                                if (usePromises) {
-                                    remove(() => {});
-                                } else {
-                                    remove(cb);
-                                }
-                            } else if (!usePromises) {
-                                cb();
+                                remove(() => {});
                             }
                         }
                     });
-                } else if (!usePromises) {
-                    cb();
                 }
             }
         });
     }
-    if (usePromises) { return cb(); }
+    return cb(); // No need to wait for completion before calling the callback.
 };
 
 // Delete empty pads at startup
@@ -84,14 +74,10 @@ exports.deletePadsAtStart = (hook_name, args, cb) => {
     listAllPads((err, data) => {
         for (var i = 0; i < data.padIDs.length; i++) {
             var padId = data.padIDs[i];
-            p.push(padId, (err) => {
-                if (err && !usePromises) {
-                    return cb(err);
-                }
-            });
+            p.push(padId);
         }
     });
-    if (usePromises) { return cb(); }
+    return cb(); // No need to wait for completion before calling the callback.
 };
 
 function wrapPromise (p, cb) {
