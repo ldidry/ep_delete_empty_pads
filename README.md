@@ -2,6 +2,10 @@
 
 This plugin will delete empty (no revision) pads at startup and when a user leaves a pad, it evaluates if the pad has revisions and deletes it otherwise.
 
+# Important notice
+
+From version 0.0.8, the plugin will no longer work with Etherpad versions lesser than 1.8.0
+
 # License
 
 Copyright 2015 Luc Didry
