@@ -9,9 +9,11 @@ exports.deletePadAtLeave = (hook, session, cb) => {
         if (session == null) return;
         if (!(await PadManager.doesPadExist(session.padId))) return;
         const pad = await PadManager.getPad(session.padId);
-        if (pad.getHeadRevisionNumber() !== 0) return;
-        logger.info(`Deleting ${session.padId} when user leaved since empty`);
-        await pad.remove();
+        if (typeof(pad) !== 'undefined' && typeof(pad.id) !== 'undefined') {
+            if (pad.getHeadRevisionNumber() !== 0) return;
+            logger.info(`Deleting ${session.padId} when user leaved since empty`);
+            await pad.remove();
+        }
     })();
     return cb(); // No need to wait for completion before calling the callback.
 };
@@ -23,9 +25,11 @@ exports.deletePadsAtStart = (hook_name, args, cb) => {
         // Process pads one at a time to avoid putting too much load on the system.
         for (const padId of padIDs) {
             const pad = await PadManager.getPad(padId);
-            if (pad.getHeadRevisionNumber() !== 0) continue;
-            logger.info(`Deleting ${pad.id} at startup since empty`);
-            await pad.remove();
+            if (typeof(pad) !== 'undefined' && typeof(pad.id) !== 'undefined') {
+                if (pad.getHeadRevisionNumber() !== 0) continue;
+                logger.info(`Deleting ${pad.id} at startup since empty`);
+                await pad.remove();
+            }
         }
     })();
     return cb(); // No need to wait for completion before calling the callback.
